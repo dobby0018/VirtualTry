@@ -1,0 +1,95 @@
+# ──────────────────────── Flutter & Dart ────────────────────────
+# Build outputs
+build/
+# Pub artifacts
+.dart_tool/
+.packages
+.pub/
+# Flutter plugins
+.flutter-plugins
+.flutter-plugins-dependencies
+# Generated metadata
+.metadata
+# Common editors/helpers
+*.lock
+*.log
+*.pyc
+*.swp
+*.class
+
+# ─────────────────────────── Android ───────────────────────────
+# Gradle
+.gradle/
+local.properties
+# Android Studio
+**/android/**/build/
+**/android/**/*.jar
+
+# Native plugin caches
+android/.cxx/
+
+# ──────────────────────────── iOS ────────────────────────────
+# Xcode
+**/ios/Pods/
+**/ios/Runner.xcworkspace/
+**/ios/build/
+# Flutter frameworks
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/.last_build_id
+
+# ─────────────────────────── Windows ───────────────────────────
+# Windows build artifacts
+build/windows/
+
+# Visual Studio
+*.sln
+*.vcxproj*
+*.vcproj*
+*.suo
+*.user
+*.userosscache
+*.rsuser
+
+# ─────────────────────────── macOS ────────────────────────────
+build/macos/
+# Xcode userdata
+*.xcuserstate
+*.DS_Store
+
+# ──────────────────────────── Linux ───────────────────────────
+build/linux/
+
+# ─────────────────────── Python & FastAPI ───────────────────────
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+# Virtual environments
+.venv/
+venv/
+env/
+# IDE-specific Python caches
+.pytest_cache/
+#mypy caches
+.mypy_cache/
+# Environment variables
+.env
+
+# ─────────────────────────── IDEs & Editors ───────────────────────────
+# IntelliJ / Android Studio
+*.iml
+*.ipr
+*.iws
+.idea/
+# VS Code
+.vscode/
+# Eclipse / NetBeans / Sublime
+.project
+.settings/
+
+# ─────────────────────────────── OS ───────────────────────────────
+# macOS
+.DS_Store
+# Windows
+Thumbs.db
+
