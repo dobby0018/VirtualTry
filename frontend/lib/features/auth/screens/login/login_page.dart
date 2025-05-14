@@ -10,13 +10,20 @@ import 'package:flutter_vto_project/features/auth/screens/home/home_page.dart';
 import 'package:flutter_vto_project/navigation_menu.dart';
 import 'package:flutter_vto_project/utils/validators/validation.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final formKey = GlobalKey<FormState>();
+  bool rememberMe = false;
 
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
-    final _formKey = GlobalKey<FormState>(); // Step 1: Add Form Key
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -47,7 +54,7 @@ class LoginScreen extends StatelessWidget {
 
               /// Form
               Form(
-                key: _formKey, // Step 2: Use the key
+                key: formKey,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                     vertical: TSizes.spaceBtwSections,
@@ -82,6 +89,7 @@ class LoginScreen extends StatelessWidget {
                           if (value == null || value.isEmpty) {
                             return 'Password is required';
                           }
+                          return null;
                         },
                       ),
                       const SizedBox(height: TSizes.spaceBtwInputFields / 2),
@@ -92,7 +100,14 @@ class LoginScreen extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              Checkbox(value: false, onChanged: (value) {}),
+                              Checkbox(
+                                value: rememberMe,
+                                onChanged: (value) {
+                                  setState(() {
+                                    rememberMe = value!;
+                                  });
+                                },
+                              ),
                               const Text(TTexts.rememberMe),
                             ],
                           ),
@@ -109,7 +124,8 @@ class LoginScreen extends StatelessWidget {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () {
-                            if (_formKey.currentState!.validate()) {
+                            if (formKey.currentState!.validate()) {
+                              // Use rememberMe value here if needed
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(

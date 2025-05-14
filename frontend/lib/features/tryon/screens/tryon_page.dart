@@ -1,7 +1,10 @@
 import 'dart:io';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:video_player/video_player.dart';
+import 'package:flutter_vto_project/features/tryon/screens/View3DClothesPage.dart';
 
 class TryOnPage extends StatefulWidget {
   const TryOnPage({super.key});
@@ -11,9 +14,10 @@ class TryOnPage extends StatefulWidget {
 }
 
 class _TryOnPageState extends State<TryOnPage> {
-  File? _imageFile;
-  // Step 1: Add this function inside your state class
-  void _showSuccessDialog(File imageFile) {
+  File? _videoFile;
+  VideoPlayerController? _videoController;
+
+  void _showSuccessDialog(File videoFile) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -28,10 +32,10 @@ class _TryOnPageState extends State<TryOnPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                CircleAvatar(radius: 40, backgroundImage: FileImage(imageFile)),
+                const Icon(Icons.videocam, size: 60, color: Colors.indigo),
                 const SizedBox(height: 20),
                 const Text(
-                  "Your 3D has been successfully created!",
+                  "Your video has been successfully recorded!",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   textAlign: TextAlign.center,
                 ),
@@ -39,7 +43,12 @@ class _TryOnPageState extends State<TryOnPage> {
                 ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context); // Close dialog
-                    // TODO: Navigate to your 3D cloth try-on screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const View3DClothesPage(),
+                      ),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.indigo[900],
@@ -52,7 +61,7 @@ class _TryOnPageState extends State<TryOnPage> {
                     ),
                   ),
                   child: const Text(
-                    "View clothes in 3D",
+                    "Process Video for 3D",
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -67,29 +76,43 @@ class _TryOnPageState extends State<TryOnPage> {
     );
   }
 
-  // Step 2: Update your camera function to call this modal
-  Future<void> _requestCameraPermissionAndCaptureImage() async {
+  Future<void> _requestCameraPermissionAndRecordVideo() async {
     var status = await Permission.camera.request();
 
     if (status.isGranted) {
-      final pickedImage = await ImagePicker().pickImage(
+      final pickedVideo = await ImagePicker().pickVideo(
         source: ImageSource.camera,
         preferredCameraDevice: CameraDevice.rear,
+        maxDuration: const Duration(seconds: 30), // Optional: Limit duration
       );
 
-      if (pickedImage != null) {
+      if (pickedVideo != null) {
+        final videoFile = File(pickedVideo.path);
+
         setState(() {
-          _imageFile = File(pickedImage.path);
+          _videoFile = videoFile;
+          _videoController?.dispose(); // Dispose old controller
+          _videoController = VideoPlayerController.file(videoFile)
+            ..initialize().then((_) {
+              setState(() {});
+              _videoController?.setLooping(true);
+              _videoController?.play(); // Autoplay
+            });
         });
 
-        // 🔥 Show the modal here after picking image
-        _showSuccessDialog(_imageFile!);
+        _showSuccessDialog(videoFile);
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Camera permission is required")),
       );
     }
+  }
+
+  @override
+  void dispose() {
+    _videoController?.dispose();
+    super.dispose();
   }
 
   @override
@@ -101,24 +124,23 @@ class _TryOnPageState extends State<TryOnPage> {
         child: Column(
           children: [
             const Text(
-              '📸 Please take a picture in a well-lit area covering your full body.',
+              '🎥 Please record a full-body video in a well-lit area.',
               style: TextStyle(fontSize: 16),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
-
             ElevatedButton.icon(
-              icon: const Icon(Icons.camera_alt, color: Colors.black87),
+              icon: const Icon(Icons.videocam, color: Colors.black87),
               label: const Text(
-                'Open Camera',
+                'Record Video',
                 style: TextStyle(
                   color: Colors.black87,
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              onPressed: _requestCameraPermissionAndCaptureImage,
+              onPressed: _requestCameraPermissionAndRecordVideo,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.grey[200], // Light color for dark theme
+                backgroundColor: Colors.grey[200],
                 foregroundColor: Colors.black87,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24.0,
@@ -131,21 +153,46 @@ class _TryOnPageState extends State<TryOnPage> {
                 shadowColor: Colors.grey[700],
               ),
             ),
-
             const SizedBox(height: 20),
-
-            _imageFile != null
+            _videoFile != null
                 ? Column(
                   children: [
                     const Text(
-                      'Captured Image:',
+                      'Recorded Video:',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(height: 10),
-                    Image.file(_imageFile!, height: 300),
+                    const SizedBox(height: 30),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      height:
+                          MediaQuery.of(context).size.height *
+                          0.6, // taller height
+                      padding: const EdgeInsets.all(12),
+                      child:
+                          _videoController != null &&
+                                  _videoController!.value.isInitialized
+                              ? ClipRRect(
+                                borderRadius: BorderRadius.circular(16),
+                                child: FittedBox(
+                                  fit: BoxFit.contain, // maintain proportions
+                                  child: SizedBox(
+                                    width:
+                                        _videoController!
+                                            .value
+                                            .size
+                                            .height, // switch width and height
+                                    height: _videoController!.value.size.width,
+                                    child: VideoPlayer(_videoController!),
+                                  ),
+                                ),
+                              )
+                              : const Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                    ),
                   ],
                 )
-                : const Text("No image captured yet."),
+                : const Text("No video recorded yet."),
           ],
         ),
       ),
