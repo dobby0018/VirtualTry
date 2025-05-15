@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vto_project/features/cart/screens/cart_page.dart';
+import 'package:flutter_vto_project/features/auth/screens/product_details/checkout_page.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final String name;
@@ -125,12 +126,14 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
                   SizedBox(height: 32),
 
-                  // Buy Now Button
+                  SizedBox(height: 16),
+
+                  // Add to Cart Button
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.greenAccent,
+                        backgroundColor: Colors.white,
                         foregroundColor: Colors.black,
                         padding: EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
@@ -150,16 +153,50 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                             context,
                             MaterialPageRoute(builder: (context) => CartPage()),
                           );
-                          // Implement your checkout logic here
+                        }
+                      },
+
+                      child: Text("Add to Cart"),
+                    ),
+                  ),
+
+                  SizedBox(height: 16),
+
+                  // Buy Now Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.black,
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () {
+                        if (selectedSize == null) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(
-                                "Proceeding to buy ${widget.name} (Size: $selectedSize)",
-                              ),
+                              content: Text("Please select a size."),
+                              backgroundColor: Colors.redAccent,
+                            ),
+                          );
+                        } else {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => CheckoutPage(
+                                    productName: widget.name,
+                                    price: widget.price,
+                                    selectedSize: selectedSize!,
+                                  ),
                             ),
                           );
                         }
                       },
+
                       child: Text("Buy Now"),
                     ),
                   ),
