@@ -10,6 +10,15 @@ class HomeTab extends StatefulWidget {
 
 class _HomeTabState extends State<HomeTab> {
   String selectedCategory = 'All';
+  String searchQuery = '';
+  final Map<String, String> categoryMap = {
+    'Louis Vuitton': 'Women',
+    'Nike': 'Men',
+    'Gap': 'Kids',
+    'Chanel': 'Women',
+    'Tommy Hilfiger': 'Men',
+    'Gucci': 'Men',
+  };
 
   // Sample product data
   final List<Map<String, dynamic>> products = [
@@ -56,6 +65,25 @@ class _HomeTabState extends State<HomeTab> {
       'seller': 'Gucci India',
     },
   ];
+  List<Map<String, dynamic>> get filteredProducts {
+    return products.where((product) {
+      final nameMatch = product['name'].toString().toLowerCase().contains(
+        searchQuery,
+      );
+      final descMatch = product['description']
+          .toString()
+          .toLowerCase()
+          .contains(searchQuery);
+
+      final matchesSearch = nameMatch || descMatch;
+
+      final matchesCategory =
+          selectedCategory == 'All' ||
+          categoryMap[product['name']] == selectedCategory;
+
+      return matchesSearch && matchesCategory;
+    }).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,6 +98,11 @@ class _HomeTabState extends State<HomeTab> {
               padding: const EdgeInsets.all(12.0),
               child: TextField(
                 style: const TextStyle(color: Colors.white),
+                onChanged: (value) {
+                  setState(() {
+                    searchQuery = value.toLowerCase();
+                  });
+                },
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.grey[900],
@@ -128,7 +161,7 @@ class _HomeTabState extends State<HomeTab> {
             Expanded(
               child: GridView.builder(
                 padding: const EdgeInsets.all(12.0),
-                itemCount: products.length,
+                itemCount: filteredProducts.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   mainAxisSpacing: 12,
@@ -136,7 +169,7 @@ class _HomeTabState extends State<HomeTab> {
                   childAspectRatio: 0.65,
                 ),
                 itemBuilder: (context, index) {
-                  final product = products[index];
+                  final product = filteredProducts[index];
                   return GestureDetector(
                     onTap: () {
                       Navigator.push(

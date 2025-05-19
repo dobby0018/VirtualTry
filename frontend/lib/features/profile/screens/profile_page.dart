@@ -16,12 +16,10 @@ class _ProfilePageState extends State<ProfilePage> {
   final locationController = TextEditingController(text: 'USA');
 
   File? _profileImage;
-
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _pickImage(ImageSource source) async {
     final XFile? pickedFile = await _picker.pickImage(source: source);
-
     if (pickedFile != null) {
       setState(() {
         _profileImage = File(pickedFile.path);
@@ -51,7 +49,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   },
                   icon: const Icon(Icons.camera_alt),
                   label: const Text("Camera"),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.teal),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.lightBlue,
+                  ),
                 ),
                 ElevatedButton.icon(
                   onPressed: () {
@@ -60,7 +60,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   },
                   icon: const Icon(Icons.photo_library),
                   label: const Text("Gallery"),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.teal),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.lightBlue,
+                  ),
                 ),
               ],
             ),
@@ -69,6 +71,9 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void _saveDetails() {
+    setState(() {
+      // Triggers UI refresh with new values
+    });
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text('Profile updated!')));
@@ -137,7 +142,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ElevatedButton(
                     onPressed: _saveDetails,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.teal,
+                      backgroundColor: Colors.lightBlue,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -146,19 +151,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   const SizedBox(height: 30),
                   const Divider(height: 20, color: Colors.grey),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Your Orders',
-                      style: Theme.of(
-                        context,
-                      ).textTheme.titleMedium?.copyWith(color: Colors.white),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  _buildOrderTile('Order #1234', 'Delivered on April 10, 2025'),
-                  _buildOrderTile('Order #5678', 'Shipped - Expected Apr 22'),
-                  const Divider(height: 30, color: Colors.grey),
                   TextButton.icon(
                     onPressed: _logout,
                     icon: const Icon(Icons.logout, color: Colors.red),
@@ -191,20 +183,6 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildOrderTile(String title, String subtitle) {
-    return ListTile(
-      leading: const Icon(Icons.shopping_bag, color: Colors.teal),
-      title: Text(title, style: const TextStyle(color: Colors.white)),
-      subtitle: Text(subtitle, style: const TextStyle(color: Colors.grey)),
-      trailing: const Icon(
-        Icons.arrow_forward_ios,
-        size: 16,
-        color: Colors.grey,
-      ),
-      onTap: () {},
     );
   }
 }

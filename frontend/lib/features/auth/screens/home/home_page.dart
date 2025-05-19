@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:flutter_vto_project/features/tryon/screens/tryon_page.dart';
-import 'package:flutter_vto_project/features/profile/screens/profile_page.dart';
 import 'package:flutter_vto_project/features/cart/screens/cart_page.dart';
 import 'package:flutter_vto_project/features/auth/screens/home/hometab.dart';
+import 'package:flutter_vto_project/features/profile/screens/profile_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,6 +18,7 @@ class _HomePageState extends State<HomePage> {
     const HomeTab(),
     const TryOnPage(),
     const CartPage(),
+    const ProfilePage(),
   ];
 
   @override

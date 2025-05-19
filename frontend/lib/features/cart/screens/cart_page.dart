@@ -1,34 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:flutter_vto_project/features/auth/screens/product_details/checkout_page.dart';
+import 'package:flutter_vto_project/features/cart/screens/cart_service.dart';
 
 class CartPage extends StatelessWidget {
   const CartPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> cartItems = [
-      {
-        "image": "assets/images/product1.jpg",
-        "brand": "Louis Vuitton",
-        "title": "Party wear",
-        "desc": "Elegant Red Dress",
-        "price": 4999,
-        "quantity": 1,
-      },
+    final cartItems = CartService.cartItems;
 
-      {
-        "image": "assets/images/product3.jpg",
-        "brand": "Gap",
-        "title": "Casuals",
-        "desc": "Cotton Hoodie",
-        "price": 1899,
-        "quantity": 2,
-      },
-    ];
-
-    double totalAmount = cartItems
-        .map((item) => (item["price"] * item["quantity"]).toDouble())
-        .reduce((a, b) => a + b);
+    double totalAmount = CartService.totalAmount;
 
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
@@ -105,9 +87,25 @@ class CartPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      final item =
+                          cartItems[0]; // you can pick any one item for now
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => CheckoutPage(
+                                productName: item["title"],
+                                price: (item["price"] as num).toDouble(),
+                                selectedSize:
+                                    "M", // Replace this with actual size if available
+                              ),
+                        ),
+                      );
+                    },
+
                     child: const Text(
-                      "Check Out (4)",
+                      "Check Out",
                       style: TextStyle(fontSize: 16),
                     ),
                   ),

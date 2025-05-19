@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vto_project/features/cart/screens/cart_page.dart';
 import 'package:flutter_vto_project/features/auth/screens/product_details/checkout_page.dart';
+import 'package:flutter_vto_project/features/tryon/screens/View3DClothesPage.dart';
+import 'package:flutter_vto_project/features/cart/screens/cart_service.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final String name;
@@ -27,6 +29,15 @@ class ProductDetailPage extends StatefulWidget {
 class _ProductDetailPageState extends State<ProductDetailPage> {
   String? selectedSize;
 
+  void _showSizeAlert() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Please select a size."),
+        backgroundColor: Colors.redAccent,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,66 +51,51 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Product Image
             AspectRatio(
               aspectRatio: 3 / 4,
               child: Image.asset(widget.imagePath, fit: BoxFit.cover),
             ),
-
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Product Name
                   Text(
                     widget.name,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-
-                  SizedBox(height: 6),
-
-                  // Seller
+                  const SizedBox(height: 6),
                   Text(
                     "Seller: ${widget.seller}",
                     style: TextStyle(color: Colors.grey[400]),
                   ),
-
-                  SizedBox(height: 16),
-
-                  // Description
+                  const SizedBox(height: 16),
                   Text(
                     widget.description,
-                    style: TextStyle(color: Colors.white70),
+                    style: const TextStyle(color: Colors.white70),
                   ),
-
-                  SizedBox(height: 16),
-
-                  // Price
+                  const SizedBox(height: 16),
                   Text(
                     "₹${widget.price.toStringAsFixed(2)}",
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.greenAccent,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-
-                  SizedBox(height: 24),
-
-                  // Sizes
-                  Text(
+                  const SizedBox(height: 24),
+                  const Text(
                     "Select Size:",
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Wrap(
                     spacing: 12,
                     children:
@@ -123,81 +119,110 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                           );
                         }).toList(),
                   ),
+                  const SizedBox(height: 32),
 
-                  SizedBox(height: 32),
+                  /// Add to Cart + Generate VTON
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.lightBlue,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
 
-                  SizedBox(height: 16),
+                          onPressed: () {
+                            if (selectedSize == null) {
+                              _showSizeAlert();
+                              return;
+                            }
 
-                  // Add to Cart Button
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.black,
-                        padding: EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                            CartService.addToCart({
+                              "image": widget.imagePath,
+                              "brand": widget.seller,
+                              "title": widget.name,
+                              "desc": widget.description,
+                              "price": widget.price,
+                              "quantity": 1,
+                              "size": selectedSize,
+                            });
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Added to cart"),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                          },
+                          child: const Text("Add to Cart"),
                         ),
                       ),
-                      onPressed: () {
-                        if (selectedSize == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text("Please select a size."),
-                              backgroundColor: Colors.redAccent,
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.lightBlue,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                          );
-                        } else {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => CartPage()),
-                          );
-                        }
-                      },
+                          ),
+                          onPressed: () {
+                            if (selectedSize == null) {
+                              _showSizeAlert();
+                              return;
+                            }
 
-                      child: Text("Add to Cart"),
-                    ),
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const View3DClothesPage(),
+                              ),
+                            );
+                          },
+                          child: const Text("Generate VTON"),
+                        ),
+                      ),
+                    ],
                   ),
+                  const SizedBox(height: 16),
 
-                  SizedBox(height: 16),
-
-                  // Buy Now Button
+                  /// Buy Now Button
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.black,
-                        padding: EdgeInsets.symmetric(vertical: 16),
+                        backgroundColor: Colors.lightBlue,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                       onPressed: () {
                         if (selectedSize == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text("Please select a size."),
-                              backgroundColor: Colors.redAccent,
-                            ),
-                          );
-                        } else {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (context) => CheckoutPage(
-                                    productName: widget.name,
-                                    price: widget.price,
-                                    selectedSize: selectedSize!,
-                                  ),
-                            ),
-                          );
+                          _showSizeAlert();
+                          return;
                         }
-                      },
 
-                      child: Text("Buy Now"),
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) => CheckoutPage(
+                                  productName: widget.name,
+                                  price: widget.price,
+                                  selectedSize: selectedSize!,
+                                ),
+                          ),
+                        );
+                      },
+                      child: const Text("Buy Now"),
                     ),
                   ),
                 ],
