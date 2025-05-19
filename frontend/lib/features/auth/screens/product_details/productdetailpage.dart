@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vto_project/features/cart/screens/cart_page.dart';
-import 'package:flutter_vto_project/features/auth/screens/product_details/checkout_page.dart';
+import 'package:flutter_vto_project/features/auth/screens/product_details/scheckout.dart';
 import 'package:flutter_vto_project/features/tryon/screens/View3DClothesPage.dart';
 import 'package:flutter_vto_project/features/cart/screens/cart_service.dart';
 

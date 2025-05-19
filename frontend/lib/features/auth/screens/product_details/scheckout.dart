@@ -14,10 +14,12 @@ class CheckoutPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double total = price;
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text('Checkout'),
+        title: const Text('Checkout'),
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
         elevation: 0,
@@ -27,7 +29,7 @@ class CheckoutPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Order Summary',
               style: TextStyle(
                 fontSize: 22,
@@ -35,23 +37,35 @@ class CheckoutPage extends StatelessWidget {
                 color: Colors.white,
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // Product Details
             Text(
-              'Product: $productName',
-              style: TextStyle(color: Colors.white70, fontSize: 16),
+              "Product: $productName",
+              style: const TextStyle(color: Colors.white70, fontSize: 16),
             ),
+            const SizedBox(height: 10),
             Text(
-              'Size: $selectedSize',
-              style: TextStyle(color: Colors.white70, fontSize: 16),
+              "Size: $selectedSize",
+              style: const TextStyle(color: Colors.white70, fontSize: 16),
             ),
+            const SizedBox(height: 10),
             Text(
-              'Price: ₹${price.toStringAsFixed(2)}',
-              style: TextStyle(color: Colors.greenAccent, fontSize: 18),
+              "Price: ₹${price.toStringAsFixed(2)}",
+              style: const TextStyle(color: Colors.greenAccent, fontSize: 16),
             ),
+            const Divider(color: Colors.white12, height: 30),
 
-            Spacer(),
+            // Total
+            Text(
+              "Total: ₹${total.toStringAsFixed(2)}",
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.greenAccent,
+              ),
+            ),
+            const Spacer(),
 
             // Place Order Button
             SizedBox(
@@ -60,7 +74,7 @@ class CheckoutPage extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.greenAccent,
                   foregroundColor: Colors.black,
-                  padding: EdgeInsets.symmetric(vertical: 16),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -70,9 +84,9 @@ class CheckoutPage extends StatelessWidget {
                     context: context,
                     builder:
                         (_) => AlertDialog(
-                          title: Text('Order Confirmed!'),
-                          content: Text(
-                            'Your order for $productName (Size: $selectedSize) has been placed successfully.',
+                          title: const Text('Order Confirmed!'),
+                          content: const Text(
+                            'Your order has been placed successfully.',
                           ),
                           actions: [
                             TextButton(
@@ -81,13 +95,13 @@ class CheckoutPage extends StatelessWidget {
                                   context,
                                 ).popUntil((route) => route.isFirst);
                               },
-                              child: Text('OK'),
+                              child: const Text('OK'),
                             ),
                           ],
                         ),
                   );
                 },
-                child: Text("Place Order"),
+                child: const Text("Place Order"),
               ),
             ),
           ],

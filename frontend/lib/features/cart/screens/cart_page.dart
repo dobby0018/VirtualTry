@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:flutter_vto_project/features/auth/screens/product_details/checkout_page.dart';
+import 'package:flutter_vto_project/features/auth/screens/product_details/mcheckout_page.dart';
 import 'package:flutter_vto_project/features/cart/screens/cart_service.dart';
 
 class CartPage extends StatelessWidget {
@@ -9,7 +9,6 @@ class CartPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cartItems = CartService.cartItems;
-
     double totalAmount = CartService.totalAmount;
 
     return Scaffold(
@@ -19,7 +18,7 @@ class CartPage extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {},
+          onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
           'Cart',
@@ -29,7 +28,7 @@ class CartPage extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Iconsax.trash, color: Colors.white),
-            onPressed: () {},
+            onPressed: () {}, // Implement cart clear logic
           ),
         ],
       ),
@@ -43,12 +42,13 @@ class CartPage extends StatelessWidget {
               itemBuilder: (_, index) {
                 final item = cartItems[index];
                 return CartItemCard(
-                  image: item["image"],
-                  brand: item["brand"],
-                  title: item["title"],
-                  desc: item["desc"],
-                  price: (item["price"] as num).toDouble(),
-                  quantity: item["quantity"],
+                  image: item["image"] ?? '', // fallback to empty string
+                  brand: item["brand"] ?? '',
+                  title: item["title"] ?? '',
+                  desc: item["desc"] ?? '',
+                  price: (item["price"] ?? 0).toDouble(),
+                  quantity: item["quantity"] ?? 1,
+                  size: item["selectedSize"] ?? '',
                 );
               },
             ),
@@ -88,22 +88,13 @@ class CartPage extends StatelessWidget {
                       ),
                     ),
                     onPressed: () {
-                      final item =
-                          cartItems[0]; // you can pick any one item for now
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder:
-                              (context) => CheckoutPage(
-                                productName: item["title"],
-                                price: (item["price"] as num).toDouble(),
-                                selectedSize:
-                                    "M", // Replace this with actual size if available
-                              ),
+                          builder: (_) => CheckoutPage(cartItems: cartItems),
                         ),
                       );
                     },
-
                     child: const Text(
                       "Check Out",
                       style: TextStyle(fontSize: 16),
@@ -126,6 +117,7 @@ class CartItemCard extends StatelessWidget {
   final String desc;
   final double price;
   final int quantity;
+  final String size;
 
   const CartItemCard({
     super.key,
@@ -135,6 +127,7 @@ class CartItemCard extends StatelessWidget {
     required this.desc,
     required this.price,
     required this.quantity,
+    required this.size,
   });
 
   @override
@@ -205,6 +198,13 @@ class CartItemCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 6),
                     Text(
+                      "Size: $size",
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
+                      ),
+                    ),
+                    Text(
                       "₹${price.toStringAsFixed(2)}",
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
@@ -221,7 +221,7 @@ class CartItemCard extends StatelessWidget {
                       Icons.add_circle_outline,
                       color: Colors.white,
                     ),
-                    onPressed: () {},
+                    onPressed: () {}, // Implement quantity +1 logic
                   ),
                   Text(
                     quantity.toString(),
@@ -232,7 +232,7 @@ class CartItemCard extends StatelessWidget {
                       Icons.remove_circle_outline,
                       color: Colors.white,
                     ),
-                    onPressed: () {},
+                    onPressed: () {}, // Implement quantity -1 logic
                   ),
                 ],
               ),
